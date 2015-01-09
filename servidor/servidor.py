@@ -30,7 +30,9 @@ def escuchar():
 		print(addr)
 		sleep(.02)
 		
-		
+'''
+Status = 0. Obitiene el nombre del jugador 
+'''	
 def escucharMsg(con,idCon):
 	try:
 		con.send('[msg]')
@@ -62,7 +64,7 @@ def juego():
 		if(len(jugadores) == 2):
 			print ( ' Si! Hay dos jugadores ! ')
 			print ( ' Armando mesa para %s ' ) % jugadores
-			for(jugador in jugadores):
+			for jugador in jugadores:
 				jugador[1].send('[msg]')
 				sleep(timing)
 				jugador[1].send('La mesa ya esta armada')
