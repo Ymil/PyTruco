@@ -3,32 +3,7 @@
 Programador: Lautaro Linquiman
 '''
 import vista
-from random import randrange
 
-class cartas():
-	'''Clase Hija encargada de manejar las cartas, acomplada al controlador'''
-	def __init__(self,cantidadJugadores):
-		self.cantidadJugadores = cantidadJugadores
-		print('Clase cartas iniciada')
-		self.cartas = ['oro_1','oro_2','oro_3','oro_4','oro_5','oro_6','oro_7','oro_10','oro_11','oro_12',
-		'espada_1','espada_2','espada_3','espada_4','espada_5','espada_6','espada_7','espada_10','espada_11','espada_12',
-		'basto_1','basto_2','basto_3','basto_4','basto_5','basto_6','basto_7','basto_10','basto_11','basto_12',
-		'copa_1','copa_2','copa_3','copa_4','copa_5','copa_6','copa_7','copa_10','copa_11','copa_12']
-	
-	def repartir(self):
-		#print 'Hola'
-		print('Repartiendo carta')
-		cartasJugadores = [] #Cartas de los juegador repartidas
-		for x in range(self.cantidadJugadores): #Recorre cada uno de los jugadores
-			cartasJugador = [] #Acomoda las cartas de cada jugador			
-			for c in range(3): #reparte las tres cartas a cada jugadores				
-				carta = randrange(0,len(self.cartas) - 1)
-				cartaValor = self.cartas[carta]
-				cartasJugador.append(cartaValor)
-				self.cartas.remove(cartaValor)				
-			cartasJugadores.append(cartasJugador)		
-		print('Cartas Repartidas a jugar!')
-		return cartasJugador
 	
 class controlador():
 	def __init__(self):
