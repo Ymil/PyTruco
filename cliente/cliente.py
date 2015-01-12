@@ -5,7 +5,7 @@ from socket import socket
 from time import sleep
 
 #debuggin
-debuggin = 0
+debuggin = 1
 import sys
 import traceback
 #debuggin
@@ -26,11 +26,14 @@ while(1 == 1):
 			response = c.response(msgServidor)
 			if(debuggin):
 				print ('%d msg: %s\nresponse: %d\nstatus: %d') % (x, msgServidor, response, status)
-				x = x + 1
-			#print response
+				x =   x + 1
 			if(response == 1):
 				msgSend = raw_input(">")
-				s.send(msgSend)				
+				s.send(msgSend)	
+			elif(response > 0):
+				continue			
+			#print response
+						
 			if(status == 1):		
 				print msgServidor
 			elif(status == 2):
