@@ -20,6 +20,8 @@ class cartas():
 		'copa_1','copa_2','copa_3','copa_4','copa_5','copa_6','copa_7','copa_10','copa_11','copa_12']
 		self.clonCartas = []
 		self.cartasRepartidas = []
+		
+		self.cartasJugador = [] #Almacena las cartas de los jugadores
 	
 	def __clonarCartas(self):
 		self.clonCartas = self.cartas[:]
@@ -27,6 +29,8 @@ class cartas():
 	
 	#def obtener(self, cartasN):
 		
+	def obtener(self, jugadorID,cartaID):
+		return self.cartasJugadores[jugadorID][cartaID]
 	
 	def repartir(self):
 		''' Return list ((1,2,3),(1,2,3))'''
@@ -63,4 +67,5 @@ class cartas():
 			print(cartasJugadores)
 		#debuggin
 		
+		self.cartasJugadores = cartasJugadores
 		return cartasJugadores

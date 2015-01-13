@@ -5,7 +5,7 @@ from socket import socket
 from time import sleep
 
 #debuggin
-debuggin = 1
+debuggin = 0
 import sys
 import traceback
 #debuggin
@@ -15,7 +15,7 @@ from vista import Vista
 c = Controlador()
 v = Vista()
 x = 0
-
+timing = .02
 while(1 == 1):
 	try:
 		s = socket()
@@ -29,23 +29,27 @@ while(1 == 1):
 				x =   x + 1
 			if(response == 1):
 				msgSend = raw_input(">")
-				s.send(msgSend)	
-			elif(response > 0):
-				continue			
+				s.send(msgSend)
+			
+			if(response >= 1):
+				continue
+				
 			#print response
 						
 			if(status == 1):		
 				print msgServidor
 			elif(status == 2):
-				c.setCartas(msgServidor)
+				print('Obteniendo Cartas')
+				c.setCartas(msgServidor)				
 				print(v.mostrarCartas(c.getCartas()))
-			sleep(.02)
+			sleep(timing)
 		s.close()
 	except Exception as error:
 		print("Ocurrio un error con la conexion!")
 		print("%s") % "\n"*10
 		print("Reconectando...")
-		if(debuggin):
+		
+		if(1 == 1):
 			traceback.print_exc(file=sys.stdout)
 		sleep(5)
 		

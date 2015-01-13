@@ -44,14 +44,21 @@ class Controlador(cmds):
 	#Estados de juego
 	
 	#Mano del juego
-	def getMano(self):
+	def getTurnoID(self):
 		getIdsPlayers = self.getIdAllPlayers()
-		return getIdsPlayers[self.manoJuego]
+		return self.getIdsPlayers[self.manoJuego]
+	
+	def getSiguienteTurnoID(self):
+		contrincanteID = self.manoJuego + 1
+		if(contrincanteID == 2):
+			self.manoJuego = 0
+		return self.getIdsPlayers[contrincanteID]
 	
 	def cambioMano(self):
 		self.manoJuego = self.manoJuego + 1
 		if(self.manoJuego == 2):
 			self.manoJuego = 0
+			
 	#Mano del juego
 	
 	def getIdAllPlayers(self):

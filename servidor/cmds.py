@@ -11,6 +11,12 @@ class cmds:
 	def enviarCartas(self,cartas):
 		cartas = ','.join(cartas)
 		return ('[cartas]',cartas,'[cartas]')
-		
+	
+	def indicarMano(self):
+		return '[mano]'
+	
+	def errorJugada(self):
+		return ('[errorj]')
+	
 	def obtener(self):
 		return '[get]'

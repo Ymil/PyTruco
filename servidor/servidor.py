@@ -89,7 +89,7 @@ def juego():
 				for msg in m.mesaArmada():
 					for jugador in c.jugadores: #Envia el mensaje a todos los jugadores
 						c.jugadores[jugador]['sc'].send(msg)
-					sleep(timing)
+						sleep(timing)					
 				c.setStatus(1)
 		elif(estadoDelJuego == 1): #Mesa de juego armada todo Listo para iniciar ( Al pedo ... )
 			c.setStatus(2)

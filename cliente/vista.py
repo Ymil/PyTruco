@@ -9,9 +9,10 @@ class Vista:
 		pass
 	
 	def mostrarCartas(self, cartas):
+		print ("Mostras cartas:%s") % cartas
 		str = ''
 		n = 1
 		for carta in cartas:
-			str += '%d - %s\n' % (n, cartas)
+			str += '%d - %s\n' % (n, carta)
 			n += 1			
 		return str

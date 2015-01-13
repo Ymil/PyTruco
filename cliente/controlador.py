@@ -5,7 +5,7 @@ Lautaro Linquman
 '''
 
 class Controlador:
-	def __init__(self):
+	def __init__(self, debuggin = 1):
 		self.id = 0
 		self.nombre = ''
 		self.cartas = []
@@ -13,25 +13,30 @@ class Controlador:
 		
 		self.status = 0
 		
+		#debuggin
+		self.debuggin = debuggin
+		#debuggin
+		
 		
 	def response(self, cmds):		
 		if(cmds == '[msg]'):
+			if(self.debuggin):
+				print ('[msg]')
 			if(self.getStatus() == 0):
 				self.setStatus(1)
 			else:
 				self.setStatus(0)
 			return 2
 		elif(cmds == '[cartas]'):
+			if(self.debuggin):
+				print('[cartas]')
 			if(self.getStatus() == 0):
 				self.setStatus(2)
 			else:
 				self.setStatus(0)
 			return 3
 		elif(cmds == '[get]'):
-			return 1
-		else:
-			self.setStatus(0)
-			return 0
+			return 1		
 		
 	#cartas
 	def setCartas(self, cartas):

@@ -11,6 +11,12 @@ class Modelo(cmds):
 	def darCartas(self,cartas):
 		return self.enviarCartas(cartas)
 	
+	def indicarMano(self):
+		return self.indicarMano()
+	
+	def errorJugada(self):
+		return self.enviarMsg('La jugada es invalida, ingresa una jugada valida porfavor')
+	
 	def mesaArmada(self):
 		return self.enviarMsg("La mesa ya esta armada\nEspere un momento")
 	
