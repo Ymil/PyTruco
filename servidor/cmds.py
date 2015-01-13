@@ -18,5 +18,8 @@ class cmds:
 	def errorJugada(self):
 		return ('[errorj]')
 	
+	def obtenerJugada(self):
+		return '[getJugada]'
+	
 	def obtener(self):
 		return '[get]'

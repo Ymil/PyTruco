@@ -66,12 +66,13 @@ def escucharMsg(con,idCon):
 				if(registro == 0):
 					for msgs in m.errorNick():
 						con.send(msgs)
-						sleep(timing)	
+						sleep(timing)
 					con.send(c.obtener())
 				else:
 					for msgs in m.okNick():
 						con.send(msgs)
 						sleep(timing)
+				j[idCon].setStatus(1)
 				
 			sleep(.02)
 			#print("Mensaje de id(%d): %s") % (idCon, msg)
@@ -95,6 +96,8 @@ def juego():
 			c.setStatus(2)
 			continue
 		elif(estadoDelJuego == 2):
+			
+			juegoActivo = 1
 			cartasJugadores = ()
 			cartasJugadores = cartas_.repartir()
 			if(debuggin):
@@ -106,11 +109,56 @@ def juego():
 				for msg in m.darCartas(cartasJugadores[idCartas]):
 					c.jugadores[jugador]['sc'].send(msg)						
 					sleep(timing)
-				idCartas = idCartas + 1				
+				idCartas = idCartas + 1
+			while(1 == 1):
+				manoDeJuego = c.getTurnoID()
+				contrincanteDeJuego = c.getSiguienteTurnoID()
+				conJugador1 = c.jugadores[manoDeJuego]['sc']
+				conJugador2 = c.jugadores[contrincanteDeJuego]['sc']	
+				while(1 == 1):													
+					try:
+						for msg in m.indicarTurno():
+							conJugador1.send(msg)
+							sleep(timing)
+						conJugador1.send(c.obtenerJugada())
+						jugada = int(esperarRespuesta(manoDeJuego)) #obtiene la carta o jugada
+						cartaJugada = cartas_.obtener(manoDeJuego,jugada)
+						print("El jugador %d jugo la carta %s") % (manoDeJuego, cartaJugada)						
+						break
+					except TypeError:
+						for msg in m.errorJugada():
+							conJugador1.send(msg)
+							sleep(timing)
+						conJugador1.send(c.obtenerJugada())
+						continue
+						
+				while(1 == 1):
+					try:
+						for msg in m.indicarTurno():
+							conJugador2.send(msg)
+							sleep(timing)
+						conJugador2.send(c.obtenerJugada())
+						jugada = int(esperarRespuesta(contrincanteDeJuego)) #obtiene la carta o jugada
+						cartaJugada = cartas_.obtener(contrincanteDeJuego,jugada)
+						print("El jugador %d jugo la carta %s") % (contrincanteDeJuego, cartaJugada)
+						break
+					except TypeError:
+						for msg in m.errorJugada():
+							conJugador2.send(msg)
+							sleep(timing)
+						conJugador2.send(c.obtenerJugada())
+						continue
+						
 		if(estadoDelJuego == 0):
 			sleep(5)
 		else:
 			sleep(20)
+
+def esperarRespuesta(id):
+
+	msg = c.jugadores[id]['sc'].recv(1024)
+	return msg
+	
 jg = threading.Thread(target=juego)
 jg.start()
 

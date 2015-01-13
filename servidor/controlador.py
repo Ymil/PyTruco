@@ -45,14 +45,15 @@ class Controlador(cmds):
 	
 	#Mano del juego
 	def getTurnoID(self):
-		getIdsPlayers = self.getIdAllPlayers()
-		return self.getIdsPlayers[self.manoJuego]
+		getIdsPlayers = self.getIDAllPlayers()
+		return getIdsPlayers[self.manoJuego]
 	
 	def getSiguienteTurnoID(self):
 		contrincanteID = self.manoJuego + 1
 		if(contrincanteID == 2):
 			self.manoJuego = 0
-		return self.getIdsPlayers[contrincanteID]
+		getIdsPlayers = self.getIDAllPlayers()	
+		return getIdsPlayers[contrincanteID]
 	
 	def cambioMano(self):
 		self.manoJuego = self.manoJuego + 1
@@ -61,7 +62,7 @@ class Controlador(cmds):
 			
 	#Mano del juego
 	
-	def getIdAllPlayers(self):
+	def getIDAllPlayers(self):
 		return self.jugadores.keys()
 		
 	def nuevaConexion(self,sc,addr):		

@@ -36,7 +36,9 @@ class Controlador:
 				self.setStatus(0)
 			return 3
 		elif(cmds == '[get]'):
-			return 1		
+			return 1
+		elif(cmds == '[getJugada]'):
+			return 4
 		
 	#cartas
 	def setCartas(self, cartas):
