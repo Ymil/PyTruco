@@ -16,10 +16,14 @@ class Modelo(cmds):
 	
 	def errorJugada(self):
 		return self.enviarMsg('La jugada es invalida, ingresa una jugada valida porfavor')
+				
+	def mostrarCarta(self, carta, jugadorID):
+	    msg = "El jugador %d arojo la carta %s" % (jugadorID, carta)
+	    return self.enviarMsg(msg)
 	
-	def mostrarCarta(self, carta, ID):
-		msg = '%d Jugo la carta %s' % ( ID, carta)
-		return self.enviarMsg(msg)
+	def anunciarRonda(self, numeroRonda):
+	    msg = "Se inicia la ronda numero %d" % numeroRonda
+	    return self.enviarMsg(msg)
 	
 	def mesaArmada(self):
 		return self.enviarMsg("La mesa ya esta armada\nEspere un momento")

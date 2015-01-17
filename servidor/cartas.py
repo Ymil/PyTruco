@@ -30,7 +30,7 @@ class cartas():
 	#def obtener(self, cartasN):
 		
 	def obtener(self, jugadorID,cartaID):
-		return self.cartasJugadores[jugadorID][cartaID]
+		return self.cartasJugadores[jugadorID-1][cartaID-1]
 	
 	def repartir(self):
 		''' Return list ((1,2,3),(1,2,3))'''

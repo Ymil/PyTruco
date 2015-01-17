@@ -12,7 +12,7 @@ import traceback
 
 from controlador import Controlador
 from vista import Vista
-c = Controlador()
+c = Controlador(0)
 v = Vista()
 x = 0
 timing = .02
@@ -27,7 +27,7 @@ while(1 == 1):
 			if(debuggin):
 				print ('%d msg: %s\nresponse: %d\nstatus: %d') % (x, msgServidor, response, status)
 				x =   x + 1
-			if(response == 1):
+			if(response == 1 or response == 4):
 				msgSend = raw_input(">")
 				s.send(msgSend)
 			
@@ -45,12 +45,13 @@ while(1 == 1):
 			sleep(timing)
 		s.close()
 	except Exception as error:
-		print("Ocurrio un error con la conexion!")
-		print("%s") % "\n"*10
-		print("Reconectando...")
-		
-		if(1 == 1):
-			traceback.print_exc(file=sys.stdout)
-		sleep(5)
+	    print('%s') % ('#' * 50)
+	    print("Ocurrio un error con la conexion!")
+	    print("Reconectando...")
+	    print('%s') % ('#' * 50)
+	    if(1 == 1):
+	        traceback.print_exc(file=sys.stdout)
+	    
+	    sleep(5)
 		
 	
