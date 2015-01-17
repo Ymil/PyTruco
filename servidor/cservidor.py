@@ -32,10 +32,13 @@ class servidor:
             
         self.conectar()
         
-        self.conexiones = {} #Almacena las conexiones con clientes
+        self.conexion = {} #Almacena las conexiones con clientes
         self.enlacesEstablecidos = [] #Almacena los threading con de cada cliente
+        
+        self.timing = .02 #Tiempo de espera entre mensaje y mensaje (Recepcion y emision)
         ''' Threads '''
         tConexionesEntrantes = 0
+        
         ''' Clases Externas '''
         self.c = Controlador()
         
@@ -68,24 +71,59 @@ class servidor:
             
   
     def conexionesEntrantes(self):
+        ''' Esta funcion escucha las conexiones entrantes de clientes constantemente '''
         print('------------------ Servidor En Escucha ------------------')
-        print(self.socket)
+        #print(self.socket)
         idCon = 0 #Asignador de ids de conexion
         while(1 == 1):
-            sc, addr = self.socket.accept()
+            sc, addr = self.socket.accept() #Acepta la conexion entrante del cliente
+            
             print('[Nueva Conexion] %s:%d') % (addr[0],addr[1])      
-            self.conexiones[idCon] = {'sc':sc,'addr':addr}        
-            self.enlacesEstablecidos.append(threading.Thread(target=self.escucharMensajes,args=(sc,idCon,))) #Se inicia la escucha al cliente de forma continua
-            self.enlacesEstablecidos[idCon].start()
-            id = self.c.nuevaConexion(sc,addr)        
+            self.conexion[idCon] = {'sc':sc,'addr':addr}
+                    
+            self.nuevoNick(idCon) #Se obtiene el nombre de usuario del cliente
+            
+            id = self.c.nuevaConexion(sc,addr)
+                    
             self.jugador_[idCon] = Jugador(id)
+            
             idCon = idCon + 1
+            
             sleep(.02)
             if(self.errorFatal == 1):
                 self.desconexionForzada()
+                break
     
-    def escucharMensajes(self,sc,idCon):
-        pass
+    def nuevoNick(self,idCon):
+        '''Esta funcion obtiene el nombre del jugador'''
+        try:
+            conexion = self.conexion[idCon] #Indica la conexion (SC) del cliente a escuchar
+            for msgs in self.m.bienvenida():
+                conexion.send(msgs)
+                sleep(self.timing)            
+            self.jugador_[idCon].setStatus(0)
+            conexion.send(self.c.obtener()) #Consulta el nombre     
+            while 1 == 1:            
+                if(self.jugador_[idCon].getStatus() == 0):
+                    msg = conexion.recv(1024)                    
+                    registro = self.c.regNick(msg,self.jugador_[idCon].getId()) #Registra el nombre del jugador
+                    if(registro == 0):
+                        for msgs in self.m.errorNick():
+                            conexion.send(msgs)
+                            sleep(self.timing)
+                        conexion.send(self.c.obtener())
+                    else:
+                        for msgs in self.m.okNick():
+                            conexion.send(msgs)
+                            sleep(self.timing)
+                    self.jugador_[idCon].setStatus(1)                   
+                sleep(.02)
+                #print("Mensaje de id(%d): %s") % (idCon, msg)
+        except Exception as error:
+            traceback.print_exc(file=sys.stdout)
+            if(self.errorFatal == 1):
+                self.desconexionForzada()
+                break            
     
     def desconectar(self):
         self.socket.close()
