@@ -12,7 +12,6 @@ import traceback
 
 from controlador import Controlador
 from vista import Vista
-from msg import mensaje
 c = Controlador(0)
 v = Vista()
 x = 0

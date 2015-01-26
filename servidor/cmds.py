@@ -3,10 +3,15 @@ Controlar de cliente por comandos
 09-01 son las 17:44 Hs
 Lautaro Linquiman'''
 
-class cmds:
-	def enviarMsg(self,texto):
+class Cmds:
+	def enviarMsgID(self,ID,params = ''):
 		''' Return List '''
-		return ('[msg]',texto,'[msg]')
+		if(len(params) > 0):
+			msg = '[msg#%d(%s)]' % (ID,params.join(','))
+		else:
+			msg = '[msg#%d]' % ID
+			
+		return msg
 
 	def enviarCartas(self,cartas):
 		cartas = ','.join(cartas)
@@ -24,3 +29,6 @@ class cmds:
 	
 	def obtener(self):
 		return '[get]'
+	
+	def okRegNick(self):
+		return '[okRegNick]'

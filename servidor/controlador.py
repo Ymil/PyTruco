@@ -16,9 +16,9 @@ import sys
 import traceback
 #debuggin
 
-from cmds import cmds
+from cmds import Cmds
 
-class Controlador(cmds):
+class Controlador(Cmds):
 	def __init__(self):
 		''' 
 		Estados de juego

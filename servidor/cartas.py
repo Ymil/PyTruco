@@ -5,7 +5,7 @@ Programador: Lautaro Linquiman
 '''
 from random import randrange
 
-class cartas():
+class Cartas():
 	'''Clase encargada de el manejo de las cartas del juego'''
 	def __init__(self,cantidadJugadores, debuggin = 1):
 		self.debuggin = debuggin		

@@ -3,8 +3,8 @@ Modelo de servidor
 09-01 06:11
 Lautaro Linquiman
 '''
-from cmds import cmds
-class Modelo(cmds):
+from cmds import Cmds
+class Modelo(Cmds):
 	def bienvenida(self):	
 		return self.enviarMsg('Bienvenido a PyTruco\nNesecitamos que ingreses tu nombre de usuario')
 	
