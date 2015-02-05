@@ -4,6 +4,12 @@ Programa de ejecucion del servidor PyTruco
 Lautaro Linquiman
 '''
 import cservidor
-
-s = cservidor.servidor()
+import traceback
+import sys
+try:
+    s = cservidor.servidor()
+    s.conectar()
+except Exception:
+    s.desconexionForzada()
+    traceback.print_exc(file=sys.stdout)
 

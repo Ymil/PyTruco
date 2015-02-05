@@ -41,7 +41,7 @@ class cliente(Msg):
             print(response)
             if(response == 1):
                 params = c.getMsgID() #Obtiene el ID del mensaje enviado por el servidor
-                print(c.getMsg(params)) #Imprimide el mensaje
+                print('msg: %s') % c.getMsg(params) #Imprimide el mensaje
             elif(response == 2):
                 msg = raw_input('>')
                 self.conexion.send(msg)

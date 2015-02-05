@@ -4,10 +4,13 @@ Controlar de cliente por comandos
 Lautaro Linquiman'''
 
 class Cmds:
-	def enviarMsgID(self,ID,params = ''):
-		''' Return List '''
+	def enviarMsgID(self,ID,params = ()):
+		''' Return List '''		
 		if(len(params) > 0):
-			msg = '[msg#%d(%s)]' % (ID,params.join(','))
+			if(type(params) == str):
+				msg = '[msg#%d(%s)]' % (ID,params)
+			else:
+				msg = '[msg#%d(%s)]' % (ID,','.join(str(x) for x in params))
 		else:
 			msg = '[msg#%d]' % ID
 			

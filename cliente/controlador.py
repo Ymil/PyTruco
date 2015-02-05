@@ -34,7 +34,7 @@ class Controlador(Msg):
 		'''
 		#sleep(.02)
 		self.ultimoCmd = cmds
-		if(re.match('\[msg#\d\]', cmds) or re.match('\[msg#\d\((.*)\)\]', cmds)):
+		if(re.match('\[msg#\d{1,10}\]', cmds) or re.match('\[msg#\d{1,10}\((.*)\)\]', cmds)):
 			print('Recibiendo Mensaje'.center(50,'='))
 			return 1
 		elif(cmds == '[get]'):
@@ -68,6 +68,7 @@ class Controlador(Msg):
 			try:
 				msgID = int(params['msg'])
 				params = params['params'].split(',')
+				print params
 				params = tuple(params)
 				return self.mensaje[msgID] % params
 			except Exception as error:

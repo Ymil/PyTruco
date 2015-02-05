@@ -20,7 +20,7 @@ class Mesa():
     def nuevoJugador(self, ID):
         self.jugadores.append(ID)
     
-    def jugadores(self):
+    def getJugadores(self):
         return self.jugadores
     
     
