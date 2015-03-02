@@ -1,0 +1,34 @@
+PyTruo
+Name Developer: Lautaro Linquiman
+Licencia: GLP - 2
+
+Truco argentino desarrollado en Python
+
+Funcionalidades:
+	Servidor MulTheding ( Permite multiples conexiones )
+	Cliente
+	Sistema de jugadores
+	Sistema de mesa
+		2 Jugadores
+		4 Jugadores (sin testiar)
+		6 Jugadores (sin testiar)
+	Truco, Retruco, Vale4 - En desarrollo
+	Envido, Real Envido, Flor - En desarrollo
+	
+Estado: El juego permite jugar a dos personas, determinar quien gana cada mano y ronda y sumarle 2 puntos al equipo ganador.
+
+
+PyTruco is a Truco game, developed in python
+
+Functionalities
+	Server Multhreading ( Accept multiple connections for clients )}
+	Client
+	System of players
+	System of table
+		2 Players
+		4 Players (no debugging)
+		6 Players (no debugging)
+	Truco, ReTruco, Vale 3 - in developing
+	Envido, Real Envido, Flor - in developing
+	
+Status: The game allows players, play cards, detect winner the rounds and detection of winner the hand and sum two points to the team winner
