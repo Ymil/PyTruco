@@ -30,25 +30,20 @@ class Controlador(Msg):
 		Return 1: Mensaje [msg]
 		Return 3: Cartas [cartas]
 		Return 2: Obtiene [get]
-		Return 4: Obtiene Jugada [getJugada]
+		Return 4: obtiene accion
 		'''
 		#sleep(.02)
 		self.ultimoCmd = cmds
 		if(re.match('\[msg#\d{1,10}\]', cmds) or re.match('\[msg#\d{1,10}\((.*)\)\]', cmds)):
-			print('Recibiendo Mensaje'.center(50,'='))
+			if(self.debuggin): print('Recibiendo Mensaje'.center(50,'='))
 			return 1
+		elif(re.match('\[cartas\](.*)\[cartas\]', cmds)):
+			return 3
+		elif(re.match('\[ac\](.*)\[ac\]', cmds)):
+			return 4
 		elif(cmds == '[get]'):
 			return 2
-		elif(cmds == '[cartas]'):
-			if(self.debuggin):
-				print('[cartas]')
-			if(self.getStatus() == 0):
-				self.setStatus(2)
-			else:
-				self.setStatus(0)
-			return 3		
-		elif(cmds == '[getJugada]'):
-			return 4
+				
 	
 	def getMsgID(self):
 		'''Decodifica y obtiene los ids de los mensajes y los parametros'''
@@ -63,12 +58,12 @@ class Controlador(Msg):
 		return msgReturn
 	
 	def getMsg(self, params):
-		print('Decodificando Mensaje'.center(50,' '))
+		if(self.debuggin): print('Decodificando Mensaje'.center(50,' '))
 		if(len(params['params']) > 0):
 			try:
 				msgID = int(params['msg'])
 				params = params['params'].split(',')
-				print params
+				if(self.debuggin): print params
 				params = tuple(params)
 				return self.mensaje[msgID] % params
 			except Exception as error:
@@ -78,12 +73,33 @@ class Controlador(Msg):
 		else:
 			msgID = int(params['msg'])
 			return self.mensaje[msgID]
+	
+	def getCartasFromMsg(self):
+		mo = re.match('\[cartas\](.*)\[cartas\]', self.ultimoCmd)
+		self.setCartas(mo.group(1))
+		
+	def getActionID(self):
+		'''
+		ID 1: mostrar cartas
+		'''
+		mo = re.match('\[ac\](.*)\[ac\]', self.ultimoCmd)
+		return int(mo.group(1))
 	#cartas
 	def setCartas(self, cartas):
 		self.cartas = cartas.split(',')
 		
 	def getCartas(self):
 		return self.cartas
+	
+	def mostrarCartas(self):
+		''' Muestra las cartas en forma de texto '''
+		s = ''
+		x = 1
+		for carta in self.getCartas():
+			s += '%d - %s\n' % (x,carta)
+			x += 1
+		return s
+	
 	#cartas
 	
 	#jugadas

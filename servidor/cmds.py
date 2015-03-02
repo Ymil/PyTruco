@@ -18,8 +18,10 @@ class Cmds:
 
 	def enviarCartas(self,cartas):
 		cartas = ','.join(cartas)
-		return ('[cartas]',cartas,'[cartas]')
+		return '[cartas]%s[cartas]' % cartas
 
+	def enviarAccion(self, accionID):
+		return '[ac]%d[ac]' % accionID
 	
 	def indicarMano(self):
 		return '[mano]'

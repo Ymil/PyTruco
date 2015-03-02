@@ -13,6 +13,7 @@ from mesa import Mesa
 
 from cartas import Cartas
 from jugador import Jugador
+from juego import Juego
 #debuggin
 import sys
 import traceback
@@ -21,9 +22,10 @@ import traceback
 
 from time import sleep
 from socket import socket
-
 class servidor(Msg):
-    def __init__(self, config = {}, debuggin = 1):
+    def __init__(self, config = {}):
+        self.socket = socket()
+        self.debuggin = 0
         if('ip' in config):
             self.ip = config['ip']
         else:
@@ -38,7 +40,7 @@ class servidor(Msg):
         self.conexiones = {} #Almacena las conexiones con clientes
         self.escucha = [] #Almacena los threading con de cada cliente
         
-        self.timing = .05 #Tiempo de espera entre mensaje y mensaje (Recepcion y emision)
+        self.timing = .3 #Tiempo de espera entre mensaje y mensaje (Recepcion y emision)
         ''' Threads '''
         tConexionesEntrantes = 0
         
@@ -47,21 +49,25 @@ class servidor(Msg):
         self.m = Modelo()
         self.cmds = Cmds()
         
-        self.debuggin = debuggin
+        #self.debuggin = debuggin
+        
         ''' Mesas '''
         self.cantidadMesas = 0 #Almacena la cantidad de mesas armadas
         self.mesa = [] #Aloja las mesas
+        
+        ''' Juego '''
+        self.juego_ = {}
+        self.juegosActivos = 0
         
         ''' Jugadores '''
         self.jugador_ = {}
         
         self.errorFatal = 0
-        
+        self.desconexion = 0
             
     def conectar(self):
         while(1 == 1):
-            try:
-                self.socket = socket()
+            try:                
                 self.conexion = self.socket.bind((self.ip,self.port))
                 
                 self.socket.listen(1)  
@@ -70,18 +76,15 @@ class servidor(Msg):
                 self.tConexionesEntrantes.start()
                 
                 #self.conexionesEntrantes()
-                
                 print('------------------ Conexion Establecida------------------')
-                break
+                self.conexion = 1
+                #return 1
             except Exception as error:
-                print error
-                continue
-                '''con = raw_input('Desea reintentar la conexion (Y/N)?')
-                if ( con == 'y' or con == 'Y'):
-                    continue
-                self.errorFatal = 1
-                self.desconexionForzada()
-                break'''
+                self.conexion = 0
+                #return 0
+            
+    def getStatusConection(self):
+        return self.conexion
             
   
     def conexionesEntrantes(self):
@@ -89,7 +92,9 @@ class servidor(Msg):
         print('------------------ Servidor En Escucha ------------------')
         #print(self.socket)
         idCon = 0 #Asignador de ids de conexion
-        while(1 == 1):            
+        while(1 == 1):
+            if(self.desconexion == 1):
+                break            
             sc, addr = self.socket.accept() #Acepta la conexion entrante del cliente
             
             print('[Nueva Conexion] %s:%d') % (addr[0],addr[1])      
@@ -101,23 +106,20 @@ class servidor(Msg):
             thread = threading.Thread(target=self.bienvenida, args=(idCon,))
             thread.start()
             #self.bienvenida(idCon)
-            
             idCon = idCon + 1
+            sleep(self.timing)            
             
-            sleep(.02)            
-            if(self.errorFatal == 1):
-                self.desconexionForzada()
-                break
     
     def bienvenida(self,idCon):
         '''Paso 1: del servidor [Mensaje de bienvenida]'''
-        print(idCon)
-        print(self.conexiones[idCon])
+        #print(idCon)
+        #print('[Nueva conexion] %s %d') % (self.conexiones[idCon]['addr'][0],self.conexiones[idCon]['addr'][1])
         msg = self.cmds.enviarMsgID(self.mensajeID['bienvenida'])
         self.conexiones[idCon]['sc'].send(msg)
         sleep(self.timing)
-        thread = threading.Thread(target=self.registrarNick, args=(idCon,))
-        thread.start()
+        '''thread = threading.Thread(target=self.registrarNick, args=(idCon,))
+        thread.start()'''
+        self.registrarNick(idCon)
             
     def registrarNick(self, idCon):
         '''Paso 2: Obtiene el nombre del cliente y lo registra'''
@@ -134,15 +136,17 @@ class servidor(Msg):
                 conexion.send(msg)
                 sleep(self.timing)
             else:
-                print "1_2"
                 self.jugador_[idCon].setName(nick)
                 msg = self.cmds.enviarMsgID(self.mensajeID['nickOK'])
                 conexion.send(msg)
                 sleep(self.timing)
                 break
+            if(self.desconexion == 1):
+                break
         print("[Cliente]Nuevo nick registrado: %s") % nick
-        thread = threading.Thread(target=self.opcionesJuego, args = (idCon,))
-        thread.start()
+        '''thread = threading.Thread(target=self.opcionesJuego, args = (idCon,))
+        thread.start()'''
+        self.opcionesJuego(idCon)
         #self.conexion[idCon]['sc'].send(self.cmds.okRegNick())   
     
     def opcionesJuego(self, idCon):
@@ -161,16 +165,20 @@ class servidor(Msg):
                 if(opcion == 1):
                     thread = threading.Thread(target=self.crearMesa, args = (idCon,))
                     thread.start()
+                    #self.crearMesa(idCon)
                     #self.(idCon)
                     break
                 elif(opcion == 2):
-                    thread = threading.Thread(target=self.ingresarMesa, args = (idCon,))
-                    thread.start()
+                    '''thread = threading.Thread(target=self.ingresarMesa, args = (idCon,))
+                    thread.start()'''
+                    self.ingresarMesa(idCon)
                     #self.ingresarMesa(idCon)
                     break
                 elif(opcion == 3):
-                    thread = threading.Thread(target=self.verMesas, args = (idCon,))
+                    '''thread = threading.Thread(target=self.verMesas, args = (idCon,))
                     thread.start()
+                    sleep(self.timing)'''
+                    self.verMesas(idCon)
                     #self.verMesas(idCon)
                     continue
                 else:
@@ -180,6 +188,8 @@ class servidor(Msg):
                 conexion.send(msg)
                 sleep(self.timing)               
                 continue
+            if(self.desconexion == 1):
+                break
     
     def crearMesa(self,idCon):
         ''' Esta funcion crea una nueva mesa '''
@@ -204,10 +214,13 @@ class servidor(Msg):
                     raise()
                 break
             except:
+                traceback.print_exc(file=sys.stdout)
                 msg = self.cmds.enviarMsgID(self.mensajeID['errorOpcion'], 'entre 1 y 3')
                 conexion.send(msg)
                 sleep(self.timing)               
                 continue
+            if(self.desconexion == 1):
+                break
         nombreCreador = self.jugador_[idCon].getName()
         idJugador = self.jugador_[idCon].getID()
         mesaCreada = Mesa(cantidadJugadores, nombreCreador, self.cantidadMesas)
@@ -217,14 +230,19 @@ class servidor(Msg):
         self.enviarMsgID(idCon, 'mesaCreada')
         
     def verMesas(self,idCon):
-        ''' Esta funcion muestra las mesas actuales '''        
-        for mesa in self.mesa:
-            info = mesa.getInfo()
-            self.enviarMsgID(idCon, 'infoMesas', info)
+        ''' Esta funcion muestra las mesas actuales '''
+        if(self.debuggin): print(self.mesa)
+        if(len(self.mesa) > 0):       
+            for mesa in self.mesa:
+                info = mesa.getInfo()
+                self.enviarMsgID(idCon, 'infoMesas', info)
+        else:
+            self.enviarMsgID(idCon, 'noMesas')
     
     def ingresarMesa(self,idCon):
         ''' Esta funcion ingresa el jugador a una mesa '''
-        while(1 == 1):            
+        j = 1
+        while(1 == j):            
             self.enviarMsgID(idCon, 'ingresarMesa')
             self.obtenerMsg(idCon)
             respuesta = self.obtenerRespuesta(idCon)            
@@ -236,9 +254,10 @@ class servidor(Msg):
                 self.mesa[idMesa].nuevoJugador(idCon)               
                 creadaPor = self.mesa[idMesa].getInfo()[3]
                 self.enviarMsgID(idCon, 'bienvenidoMesa', creadaPor)
+                j = 0
                 if(self.mesa[idMesa].getStatus()):
                     self.iniciarJuego(idMesa)
-                break
+                
             except IndexError:
                 self.enviarMsgID(idCon, 'mesaNoExistente')
                 continue
@@ -249,11 +268,73 @@ class servidor(Msg):
                 traceback.print_exc(file=sys.stdout)
                 #print 'Error'
                 continue
+            finally:
+                traceback.print_exc(file=sys.stdout)
+            if(self.desconexion == 1):
+                break
          
     def iniciarJuego(self, mesaID):
         self.enviarMsgIDMesa(mesaID, 'iniciandoPartida')
         self.enviarMsgIDMesa(mesaID, 'haJugador')
+        self.juego(mesaID)
     
+    def juego(self,mesaID):        
+        jugadores = self.mesa[mesaID].getJugadores()
+        equipos = self.mesa[mesaID].getEquipos()        
+        self.juego_[mesaID] = Juego(jugadores,equipos)
+        j_ = self.juego_[mesaID]
+        while 1:
+            for equipo in j_.getPuntosEquipos():
+                self.enviarMsgIDMesa(mesaID, 'puntos', (equipo, j_.puntosEquipos[equipo]))
+            ''' Repartir cartas '''
+            cartasJugadores = j_.repartirCartas()
+            cx = 0
+            for jugador in jugadores:
+                cartas = cartasJugadores[cx]           
+                self.enviarCartas(jugador, cartas)
+                self.jugador_[jugador].setCartas(cartas)
+                self.enviarAccion(jugador,1)
+                cx += 1
+            while 1:
+                nRonda = j_.iniciarRonda()
+                self.enviarMsgIDMesa(mesaID, 'infoRonda', (nRonda,))  
+                ''' Se inicia el juego con el jugador que es mano '''
+                cJugadas = 0 #Alamacena la cantidad de jugadas en la ronda 
+                while cJugadas < j_.cantidadJugadores:                
+                    '''Se inicia el juego'''
+                    cJugadas += 1
+                    idJugador = j_.getTurno()            
+                    self.enviarMsgID(idJugador, 'infoTurno') #Inidica el turno al jugador
+                    while 1:
+                        self.obtenerMsg(idJugador)
+                        carta = self.obtenerRespuesta(idJugador) 
+                        carta = j_.decCartaID(carta) #Corrobora que el valor de la carta sea correcto
+                        if(not carta == 20):
+                            if(self.jugador_[idJugador].jugarCarta(carta)): #Juega la carta y se comprueba que este disponible
+                                
+                                cartaJ = self.jugador_[idJugador].getCartaJugada() #Obitene el nombre completo de la carta
+                                j_.setCarta(idJugador,cartaJ)
+                                self.enviarMsgIDMesa(mesaID, 'cartaJugada', (self.jugador_[idJugador].getName(),cartaJ,)) #Informa a los demas jugadores la carta que se jugo
+                                
+                                break
+                            else:
+                                self.enviarMsgID(idJugador, 'errorCartaJugada') #La carta que se ingreso ya fue jugada
+                        else:
+                            self.enviarMsgID(idJugador, 'errorCartaInvalida') #El valor ingresado no es valido
+                Ganador = j_.obtenerGanador()
+                if(Ganador[0] == 'parda'):
+                    self.enviarMsgIDMesa(mesaID, 'parda', (Ganador[1]))
+                elif(Ganador[0] == 'continue'):
+                    self.enviarMsgIDMesa(mesaID, 'continue', (self.jugador_[Ganador[2]].getName(),Ganador[1]))
+                elif(Ganador[0] == 'win'):
+                    self.enviarMsgIDMesa(mesaID, 'win', (Ganador[1]))
+                    j_.darPuntosEquipo(Ganador[1],2)
+                    break
+            break
+            if(self.desconexion == 1):
+                break
+                   
+               
     def obtenerRespuesta(self,idCon):
         '''Esta funcion obtiene y decodifica todos los mensajes de los clientes'''        
         try:
@@ -261,37 +342,13 @@ class servidor(Msg):
             msg = conexion.recv(1024)
             if(self.debuggin):
                 print('msg cliente[%s]: %s') % (self.conexiones[idCon]['addr'][0],msg)
-            return msg
-            '''for msgs in self.m.bienvenida():
-                conexion.send(msgs)
-                sleep(self.timing)            
-            self.jugador_[idCon].setStatus(0)
-            conexion.send(self.c.obtener()) #Consulta el nombre     
-            while 1 == 1:            
-                if(self.jugador_[idCon].getStatus() == 0):
-                    msg = conexion.recv(1024)                    
-                    registro = self.c.regNick(msg,self.jugador_[idCon].getId()) #Registra el nombre del jugador
-                    if(registro == 0):
-                        for msgs in self.m.errorNick():
-                            conexion.send(msgs)
-                            sleep(self.timing)
-                        conexion.send(self.c.obtener())
-                    else:
-                        for msgs in self.m.okNick():
-                            conexion.send(msgs)
-                            sleep(self.timing)
-                    self.jugador_[idCon].setStatus(1)                   
-                sleep(.02)
-                #print("Mensaje de id(%d): %s") % (idCon, msg)'''
+            return msg        
         except Exception as error:
             traceback.print_exc(file=sys.stdout)
             if(self.errorFatal == 1):
                 self.desconexionForzada()  
         finally:
             pass                      
-    
-    def juego(self):
-        pass
     
     def enviarMsgIDTodos(self, msgID, params = ()):
         msg = self.cmds.enviarMsgID(self.mensajeID[msgID], params)
@@ -300,7 +357,7 @@ class servidor(Msg):
     
     def enviarMsgIDMesa(self, mesaID, msgID, params = ()):
         for jugadorID in self.mesa[mesaID].getJugadores():
-            print jugadorID
+            if(self.debuggin): print jugadorID
             idCon = jugadorID
             conexion = self.conexiones[idCon]['sc']
             msg = self.cmds.enviarMsgID(self.mensajeID[msgID], params)
@@ -313,6 +370,18 @@ class servidor(Msg):
         conexion.send(msg)
         sleep(self.timing)
     
+    def enviarCartas(self, idCon, cartas):
+        conexion = self.conexiones[idCon]['sc']
+        msg = self.cmds.enviarCartas(cartas)
+        conexion.send(msg)
+        sleep(self.timing)
+        
+    def enviarAccion(self, idCon, accionID):
+        conexion = self.conexiones[idCon]['sc']
+        msg = self.cmds.enviarAccion(accionID)
+        conexion.send(msg)
+        sleep(self.timing)
+        
     def obtenerMsg(self, idCon):
         conexion = self.conexiones[idCon]['sc'] 
         msg = self.cmds.obtener()
@@ -321,7 +390,10 @@ class servidor(Msg):
     
     def desconectar(self):
         self.socket.close()
-    
+        self.desconexion = 0
+        for conexion in self.conexiones:
+            self.conexiones[conexion]['sc'].close()
+        #exit()
     
     def desconexionForzada(self):
         self.desconectar()

@@ -17,4 +17,14 @@ class Msg:
     mensajeID['haJugador'] = 1007
     mensajeID['mesaNoExistente'] = 1050
     mensajeID['infoMesas'] = 1100
+    mensajeID['noMesas'] = 1101
     
+    mensajeID['infoRonda'] = 2000
+    mensajeID['infoTurno'] = 2001
+    mensajeID['cartaJugada'] = 2002
+    mensajeID['errorCartaJugada'] = 2003
+    mensajeID['errorCartaInvalida'] = 2004
+    mensajeID['parda'] = 2005
+    mensajeID['continue'] = 2006
+    mensajeID['win'] = 2007
+    mensajeID['puntos'] = 2008

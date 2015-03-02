@@ -5,8 +5,8 @@ from time import sleep
 
 from controlador import Controlador
 from vista import Vista
-
-c = Controlador()
+debuggin = 0
+c = Controlador(debuggin)
 
 class cliente(Msg):
     ''' Clase encarga de controlar la interconexion con el servidor jugador-servidor
@@ -36,15 +36,27 @@ class cliente(Msg):
     def escucha(self):
         while(1 == 1):
             msgServidor = self.conexion.recv(1024)
-            print(msgServidor)
             response = c.response(msgServidor)
-            print(response)
+            if(debuggin):
+                print(msgServidor)
+                print(response)
             if(response == 1):
                 params = c.getMsgID() #Obtiene el ID del mensaje enviado por el servidor
-                print('msg: %s') % c.getMsg(params) #Imprimide el mensaje
+                print('%s') % c.getMsg(params) #Imprimide el mensaje
             elif(response == 2):
                 msg = raw_input('>')
                 self.conexion.send(msg)
+            elif(response == 3):
+                c.getCartasFromMsg()
+            elif(response == 4):
+                print('Acion id %d') % c.getActionID()
+                if(c.getActionID() == 1):
+                    if(debuggin):
+                        print('Mostrando cartas')
+                    cartasOrdenadas = c.mostrarCartas()
+                    print(cartasOrdenadas)
+                    
+                    
                 
     
     

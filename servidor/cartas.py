@@ -12,12 +12,33 @@ class Cartas():
 		
 		if(self.debuggin):
 			print('Clase cartas iniciada')
-			
+		'''
+		Puntaje de cada carta
+		4 = 1
+		5 = 2
+		6 = 3
+		7 Basto y Copa = 4
+		10 = 5
+		11 = 6
+		12 = 7
+		As Oro Y Copo = 8
+		2 = 9
+		3 = 10
+		7 Oro = 11
+		7 Espada = 12
+		1 Basto = 13
+		1 Espada = 14
+		''' 
 		self.cantidadJugadores = cantidadJugadores	
 		self.cartas = ['oro_1','oro_2','oro_3','oro_4','oro_5','oro_6','oro_7','oro_10','oro_11','oro_12',
 		'espada_1','espada_2','espada_3','espada_4','espada_5','espada_6','espada_7','espada_10','espada_11','espada_12',
 		'basto_1','basto_2','basto_3','basto_4','basto_5','basto_6','basto_7','basto_10','basto_11','basto_12',
 		'copa_1','copa_2','copa_3','copa_4','copa_5','copa_6','copa_7','copa_10','copa_11','copa_12']
+		
+		self.cartasPuntaje = {'oro_1':8,'oro_2':9,'oro_3':10,'oro_4':1,'oro_5':2,'oro_6':3,'oro_7':11,'oro_10':5,'oro_11':6,'oro_12':7,
+		'espada_1':14,'espada_2':9,'espada_3':10,'espada_4':1,'espada_5':2,'espada_6':3,'espada_7':12,'espada_10':5,'espada_11':6,'espada_12':7,
+		'basto_1':13,'basto_2':9,'basto_3':10,'basto_4':1,'basto_5':2,'basto_6':3,'basto_7':4,'basto_10':5,'basto_11':6,'basto_12':7,
+		'copa_1':8,'copa_2':9,'copa_3':10,'copa_4':1,'copa_5':2,'copa_6':3,'copa_7':4,'copa_10':5,'copa_11':6,'copa_12':7}
 		self.clonCartas = []
 		self.cartasRepartidas = []
 		
@@ -31,6 +52,9 @@ class Cartas():
 		
 	def obtener(self, jugadorID,cartaID):
 		return self.cartasJugadores[jugadorID-1][cartaID-1]
+	
+	def getPuntajeDeCarta(self,cartaSTRID):
+		return self.cartasPuntaje[cartaSTRID]
 	
 	def repartir(self):
 		''' Return list ((1,2,3),(1,2,3))'''

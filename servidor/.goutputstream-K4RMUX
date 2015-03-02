@@ -4,7 +4,8 @@ class Mesa():
         self.creadaPor = creadaPor
         self.mesaID = mesaID
         self.jugadores = []
-        self.equipoJugadores = []
+        self.equipoJugadores = []   
+        self.equipo = 0	
         self.status = 0
     
     def getInfo(self):
@@ -32,5 +33,3 @@ class Mesa():
     
     def getEquipos(self):
         return self.equipoJugadores
-    
-    
