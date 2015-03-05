@@ -28,3 +28,4 @@ class Msg:
     mensajeID['continue'] = 2006
     mensajeID['win'] = 2007
     mensajeID['puntos'] = 2008
+    mensajeID['empate'] = 2009

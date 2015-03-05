@@ -322,15 +322,21 @@ class servidor(Msg):
                         else:
                             self.enviarMsgID(idJugador, 'errorCartaInvalida') #El valor ingresado no es valido
                 Ganador = j_.obtenerGanador()
+                print('[debuggin-cServidor-juego-Ganador]', Ganador)
                 if(Ganador[0] == 'parda'):
-                    self.enviarMsgIDMesa(mesaID, 'parda', (Ganador[1]))
+                    self.enviarMsgIDMesa(mesaID, 'parda', (Ganador[1],))                
                 elif(Ganador[0] == 'continue'):
                     self.enviarMsgIDMesa(mesaID, 'continue', (self.jugador_[Ganador[2]].getName(),Ganador[1]))
                 elif(Ganador[0] == 'win'):
-                    self.enviarMsgIDMesa(mesaID, 'win', (Ganador[1]))
+                    self.enviarMsgIDMesa(mesaID, 'win', (Ganador[1],))
                     j_.darPuntosEquipo(Ganador[1],2)
+                    j_.resetRonda()
                     break
-            break
+                elif(Ganador[0] == 'empate'):
+                    self.enviarMsgIDMesa(mesaID, 'empate', (Ganador[2]))
+                    j_.darPuntosEquipo(Ganador[1],2)
+                    j_.resetRonda()
+                    break
             if(self.desconexion == 1):
                 break
                    

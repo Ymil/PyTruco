@@ -26,7 +26,13 @@ class Jugador():
 	
 	def setCartas(self, cartas):
 		''' Se ingresan la cartas que les da el juego '''
+		self.resetCartas()
 		self.cartas = cartas	
+	
+	def resetCartas(self):
+		self.cartas = []
+		self.cartasJugadas = []
+		self.ultimaCartaJugada = 0
 		
 	def jugarCarta(self, cartaID):
 		''' Corrobora que las cartas del jugador sea valida y la juega '''

@@ -8,6 +8,7 @@ Funcionalidades:
 	Servidor MulTheding ( Permite multiples conexiones )
 	Cliente
 	Sistema de jugadores
+	Pardas
 	Sistema de mesa
 		2 Jugadores
 		4 Jugadores (sin testiar)
@@ -24,6 +25,7 @@ Functionalities
 	Server Multhreading ( Accept multiple connections for clients )}
 	Client
 	System of players
+	Dead heat
 	System of table
 		2 Players
 		4 Players (no debugging)

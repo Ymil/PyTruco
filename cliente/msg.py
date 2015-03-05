@@ -37,3 +37,4 @@ class Msg:
     mensaje[2006] = '%s gano la mano con %s'
     mensaje[2007] = 'El equipo %s gano la ronda'
     mensaje[2008] = '%s tiene %s puntos'
+    mensaje[2009] = 'Ocurrio un empate, los puntos son para el equipo %s'

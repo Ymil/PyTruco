@@ -10,7 +10,7 @@ import sys
 from time import sleep
 try:
 	import gtk
-	InterfaceGrafica = 1
+	InterfaceGrafica = 0
 except:
 	InterfaceGrafica = 0
 if(InterfaceGrafica):
@@ -120,6 +120,7 @@ else:
 		else:
 			print("Ocurrio un error al intentar establecer conexion")
 	except KeyboardInterrupt:
+		print("Ocurrio un error al conectar")
 		servidor.desconectar()
 		exit()
 		
