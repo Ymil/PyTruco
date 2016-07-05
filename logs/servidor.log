@@ -1,0 +1,19 @@
+ERROR:root:No se pudo establecer la conexion
+[Errno 98] La dirección ya se está usando
+ERROR:root:No se pudo establecer la conexion
+[Errno 98] La dirección ya se está usando
+ERROR:root:No se pudo establecer la conexion
+[Errno 98] La dirección ya se está usando
+DEBUG:root:Se detiene la ejecucion
+ERROR:root:No se pudo establecer la conexion
+[Errno 98] La dirección ya se está usando
+DEBUG:root:Se detiene la ejecucion
+ERROR [2016-06-29 18:23:27,093]:No se pudo establecer la conexion
+[Errno 98] La dirección ya se está usando
+DEBUG [2016-06-29 18:23:27,094]:Se detiene la ejecucion
+ERROR [2016-06-29 18:24:34,828]: No se pudo establecer la conexion
+[Errno 98] La dirección ya se está usando
+ERROR [2016-06-29 18:24:36,554]: No se pudo establecer la conexion
+[Errno 98] La dirección ya se está usando
+ERROR [2016-06-29 18:24:37,559]: No se pudo establecer la conexion
+[Errno 98] La dirección ya se está usando

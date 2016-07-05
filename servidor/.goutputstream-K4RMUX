@@ -19,7 +19,7 @@ class Mesa():
             self.status = 0
             return 0
     
-    def nuevoJugador(self, ID):
+    def newPlayer(self, ID):
         ''' ID: IDCon '''
         self.jugadores.append(ID)
         self.equipoJugadores.append(self.equipo)
@@ -28,8 +28,8 @@ class Mesa():
         else:
             self.equipo = 1
     
-    def getJugadores(self):
+    def getPlayers(self):
         return self.jugadores
     
-    def getEquipos(self):
+    def getTeams(self):
         return self.equipoJugadores

@@ -76,7 +76,7 @@ class Controlador(Msg):
 	
 	def getCartasFromMsg(self):
 		mo = re.match('\[cartas\](.*)\[cartas\]', self.ultimoCmd)
-		self.setCartas(mo.group(1))
+		self.setCards(mo.group(1))
 		
 	def getActionID(self):
 		'''
@@ -85,7 +85,7 @@ class Controlador(Msg):
 		mo = re.match('\[ac\](.*)\[ac\]', self.ultimoCmd)
 		return int(mo.group(1))
 	#cartas
-	def setCartas(self, cartas):
+	def setCards(self, cartas):
 		self.cartas = cartas.split(',')
 		
 	def getCartas(self):

@@ -11,7 +11,7 @@ class Msg:
     mensajeID['mesaCreada'] = 1001
     mensajeID['esperandoJugadores'] = 1002
     mensajeID['bienvenidoMesa'] = 1003
-    mensajeID['nuevoJugador'] = 1004
+    mensajeID['newPlayer'] = 1004
     mensajeID['ingresarMesa'] = 1005
     mensajeID['iniciandoPartida'] = 1006
     mensajeID['haJugador'] = 1007
