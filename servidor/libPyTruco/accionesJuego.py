@@ -14,7 +14,8 @@ class AccionesJuego:
         self.players = []
         self.teams = []
         self.errors = {'cardPlayerd': 'Esta carta ya fue jugada', 'invalidAction': 'No puedes realizar esta accion'}
-
+    def startGame(self, players):
+        print ""
     def setPlayers(self, players):
         self.players = players
 
@@ -57,7 +58,7 @@ class AccionesJuego:
 
         return random.randint(1,3)
 
-    def showJugada(self, playerid, playername, cardGaming):
+    def showJugada(self, teamid, playerid, playername, cardGaming):
         ''' Esta funcion se llama cuando se juega una carta
         @params
         @playerid: int
@@ -65,7 +66,7 @@ class AccionesJuego:
         @cardGaming: int Carta jugada
         Ejemplo:
         '''
-        print 'El jugador %d jugo la carta %s' % (playerid, cardGaming)
+        print 'El jugador %d:%d jugo la carta %s' % (teamid, playerid, cardGaming)
 
     def showError(self, playerid, errorName):
         ''' Esta funcion se llama cuando ocurre un error por un jugador
@@ -74,9 +75,10 @@ class AccionesJuego:
         @errorName: str ['cardPlayerd', 'invalidAction']
         Ejemplo:
         '''
-        print self.errors[errorName]
+        #print self.errors[errorName]
+        pass
 
-    def showResultMano(self, playerid, playername, teamID, card):
+    def showResultMano(self, playerid, playername, teamid, card):
         ''' Esta funcion se llama cuando termina una mano
         @params
         @playerid: int
@@ -84,7 +86,7 @@ class AccionesJuego:
         @teamID: int
         @card: int Carta
         Ejemplo:'''
-        print '%d gano la mano con %s' % (playerid, card)
+        print '%d:%d gano la mano con %s' % (teamid, playerid, card)
 
     def Parda(self):
         ''' Esta funcion se llama cuando termina la mano y hay una parda

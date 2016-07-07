@@ -16,7 +16,7 @@ def msg_debug(str1):
     #str1 = string.join(, ' ')
     logging.debug(str1)
     cuentaEjecucion += 1
-class Juego:
+class Juego():
     ''' Clase controlador del Juego
     20-01-15 05:07 Lautaro Linquiman'''
     def __init__(self, jugadores, jEquipos, mesaID):
@@ -31,14 +31,24 @@ class Juego:
         self.equipoGanadorSegundaRonda = 0
         #self.primerJugadorPartida = 0
         self.mesaID = mesaID
-        self.parda = 0
+        self.pardaObtenerGanador = 0
         self.ronda = 0
         self.rondas = {}
         self.mano = 0
         self.turno = 0
-        self.c_ = Cartas(self.cantidadJugadores, 0)
+        self.cartas_ = Cartas(self.cantidadJugadores, 0)
         self.actionGame = AccionesJuego()
-
+        self.returnObtenerGanador = {
+            'status':0,
+            'playerid': 0,
+            'playeridWin': 0,
+            'playerTeam': 0,
+            'teamWin': 0,
+            'roundWin': 0,
+            'card': '', #str Type
+            'cardWin': 0,
+        }
+        self.returnObtenerGanador = self.returnObtenerGanador
     def setActionGame(self, classActionGame):
         self.actionGame = classActionGame()
 
@@ -90,13 +100,13 @@ class Juego:
 
     def resetRonda(self):
         self.ronda = 0
-        self.parda = 0
+        self.pardaObtenerGanador = 0
     def getRonda(self):
         return self.ronda
 
     def repartirCartas(self):
         ''' Reparte la carta de los jugaodres '''
-        self.cartasJugador = self.c_.repartir()
+        self.cartasJugador = self.cartas_.repartir()
         return self.cartasJugador
 
     def darCartas(self, nJugador):
@@ -114,93 +124,125 @@ class Juego:
         return self.puntosEquipos
 
     def obtenerGanador(self):
+        '''
+        Esta funcion busca un ganador de la mano jugada y devuelve el estado que termino la mano
+        @params
+        null
+
+        @return
+        {
+            'status': int [0:win|1:parda|2:empate|3:continue],
+            'playerid': [idJugadorGanador],
+            'teamWin': [idEquipoGanador]
+            'cardWin': [CartaGandora],
+            'roundWin': int Se gano la ronda [0|1]
+        }
+        '''
+
         nRonda = self.getRonda()
-        cartaMayor = [0,0]
 
         '''
         cartaMayor[0] Indica la carta ganadora
-        cartaMayor[1] Indica el IDjugador ganador
+        returnObtenerGanador['playerid'] Indica el IDjugador ganador
         '''
 
         parda = 0
         msg_debug('Ejecutando %s' % inspect.stack()[0][3])
+        str1 = 'Rondas ', len(self.rondas),'/', self.rondas
+        msg_debug(str1)
+        self.returnObtenerGanador['cardWin'] = 0
         for ronda in self.rondas[nRonda]:
-            msg_debug("Ronda %d" % self.ronda)
-            msg_debug(cartaMayor)
-            #print(ronda)
-            jugadorID = ronda[0]
-            cartaSTR = ronda[1]
-            msg_debug('obtenerGanador-cartaSTR] %s' % cartaSTR)
-            puntajeCartaJugador = self.c_.cartasPuntaje[cartaSTR]
+            #print dir(ronda)
+
+            self.returnObtenerGanador['playerid'] = ronda[0]
+            self.returnObtenerGanador['playerTeam'] = self.jEquipos[self.returnObtenerGanador['playerid']]
+            self.returnObtenerGanador['card'] = ronda[1]
+
+            msg_debug('[obtenerGanador-cartaSTR] %s' % self.returnObtenerGanador['card'])
+            puntajeCartaJugador = self.cartas_.getPoints(self.returnObtenerGanador['card'])
             if(nRonda == 1):
                 ''' Se setean la variables para iniciar el juego '''
                 self.equipoGanadorPrimeraRonda = 0
                 self.equipoGanadorSegundaRonda = 0
-                self.parda = 0
+                self.pardaObtenerGanador = 0
 
-            if(cartaMayor[0] == 0):
+            if(self.returnObtenerGanador['cardWin'] == 0):
+                msg_debug("[Carta Ganadora] Todavia no hay una carta ganadora")
                 puntajeCartaMayor = 0
             else:
-                puntajeCartaMayor = self.c_.cartasPuntaje[cartaMayor[0]]
-
+                puntajeCartaMayor = self.cartas_.getPoints(self.returnObtenerGanador['cardWin'])
+                msg_debug("[Carta Ganadora] %s:%d" % (self.returnObtenerGanador['cardWin'], puntajeCartaMayor))
 
             if(puntajeCartaJugador > puntajeCartaMayor):
-                cartaMayor = (cartaSTR, jugadorID)
+                self.returnObtenerGanador['playeridWin'] = self.returnObtenerGanador['playerid']
+                self.returnObtenerGanador['teamWin'] = self.returnObtenerGanador['playerTeam']
+                self.returnObtenerGanador['cardWin'] = self.returnObtenerGanador['card']
                 parda = 0
             elif(puntajeCartaJugador == puntajeCartaMayor):
-                cartaMayor = (cartaSTR)
+                self.returnObtenerGanador['cardWin'] = self.returnObtenerGanador['card']
                 parda = 1
-        msg_debug('Carta Mayor')
-        msg_debug(cartaMayor)
-
+        print(self.returnObtenerGanador['teamWin'])
+        equipoWinManoActual = self.returnObtenerGanador['teamWin']
         msg_debug("Parda %d" % parda)
         if(self.ronda == 1):
             if(parda == 1):
-                self.parda = 1
-                return ('parda', cartaMayor)
-            jPos = cartaMayor[1]
-            self.equipoGanadorPrimeraRonda = self.jEquipos[jPos]
-            self.setTurno(jPos)
-            return ('continue', cartaMayor[0], cartaMayor[1])
+                self.pardaObtenerGanador = 1
+                self.parda()
+            print 'oh'
+            self.equipoGanadorPrimeraRonda = equipoWinManoActual
+            self.setTurno(self.returnObtenerGanador['playeridWin'])
+            self.continuarRonda()
         elif(self.ronda == 2):
-            if(parda == 0):
-                jPos = cartaMayor[1]
-                equipoWinManoActual = self.jEquipos[jPos]
-            if(self.parda == 1 or parda == 1):
+            if(self.pardaObtenerGanador == 1 or parda == 1):
                 if(parda == 0):
-                    return ('win', equipoWinManoActual)
-                elif(parda == 1 and self.parda == 1):
-                    return ('parda', cartaMayor)
-                elif(parda == 0 and self.parda == 1):
-                    return ('win', self.equipoGanadorPrimeraRonda)
-                elif(parda == 1 and self.parda == 0):
-                    return ('win', self.equipoGanadorPrimeraRonda)
+                    self.ganadorDeRonda()
+                elif((parda == 0 and self.pardaObtenerGanador == 1) or (parda == 1 and self.pardaObtenerGanador == 0)):
+                    self.returnObtenerGanador['teamWin'] = self.equipoGanadorSegundaRonda
+                    self.ganadorDeRonda()
+                elif(parda == 1 and self.pardaObtenerGanador == 1):
+                    self.parda()
+
             self.equipoGanadorSegundaRonda = equipoWinManoActual
             if(equipoWinManoActual == self.equipoGanadorPrimeraRonda):
-                return ('win', self.equipoGanadorPrimeraRonda)
+                self.ganadorDeRonda()
             else:
-                self.setTurno(jPos)
-                return ('continue', cartaMayor[0], cartaMayor[1])
+                self.continuarRonda()
+                self.setTurno(self.returnObtenerGanador['playerid'])
+
         elif(self.ronda == 3):
-            print parda
-            if(parda == 0):
-                jPos = cartaMayor[1]
-                equipoWinManoActual = self.jEquipos[jPos]
-            if(self.parda == 1 or parda == 1):
+            if(self.pardaObtenerGanador == 1 or parda == 1):
                 if(parda == 0):
-                    return ('win', equipoWinManoActual)
+                    self.ganadorDeRonda()
                 elif(parda == 1):
-                    return ('empate', cartaMayor, self.mano)
+                    self.empate()
             msg_debug("Equipo Ganador Mano Actual: %s" % equipoWinManoActual)
             msg_debug("Equipo Ganador Mano 2: %s" % self.equipoGanadorSegundaRonda)
             msg_debug("Equipo Ganador Mano 1: %s" % self.equipoGanadorPrimeraRonda)
             if(equipoWinManoActual == self.equipoGanadorPrimeraRonda):
-                return ('win', self.equipoGanadorPrimeraRonda)
+                self.ganadorDeRonda()
             elif(equipoWinManoActual == self.equipoGanadorSegundaRonda):
-                return ('win', self.equipoGanadorSegundaRonda)
-            msg_debug("No return")
+                self.returnObtenerGanador['teamWin'] = self.equipoGanadorSegundaRonda
+                self.ganadorDeRonda()
+            msg_debug(self.returnObtenerGanador)
+        return self.returnObtenerGanador
+
+    def empate(self):
+        self.returnObtenerGanador['status'] = 2
+        self.returnObtenerGanador['roundWin'] = 1
+        self.returnObtenerGanador['teamWin'] = self.mano
+
+    def ganadorDeRonda(self):
+        self.returnObtenerGanador['status'] = 0
+        self.returnObtenerGanador['roundWin'] = 1
+
+    def parda(self):
+        self.returnObtenerGanador['status'] = 1
+
+    def continuarRonda(self):
+        self.returnObtenerGanador['status'] = 3
 
     def iniciar(self):
+        msg_debug("Iniciando Juego")
         self.actionGame.setTeams(self.jEquipos)
         self.actionGame.setPlayers(self.jugadores)
         while 1:
@@ -233,26 +275,29 @@ class Juego:
                             if(jugador.playingCard(carta)): #Juega la carta y se comprueba que este disponible
                                 cartaJ = jugador.getCardPlayed() #Obitene el nombre completo de la carta
                                 self.setCarta(jugador.getID(),cartaJ)
-                                self.actionGame.showJugada(jugador.getID(), jugador.getName(),cartaJ)
+                                self.actionGame.showJugada(jugador.getTeam(), jugador.getID(), jugador.getName(),cartaJ)
                                 break
                             else:
                                 self.actionGame.showError(jugador.getID(), 'cardPlayerd')
                         else:
                             self.actionGame.showError(jugador.getID(), 'invalidAction')
-                Ganador = self.obtenerGanador()
-                self.actionGame.returnStatus(Ganador)
-                if(Ganador[0] == 'parda'):
+                Resultados = self.obtenerGanador()
+                self.actionGame.returnStatus(Resultados)
+                print Resultados
+
+                if(Resultados['status'] == 1):
                     self.actionGame.Parda()
-                elif(Ganador[0] == 'continue'):
-                    self.actionGame.showResultMano(Ganador[2], self.jugadores[Ganador[2]].getName(),  self.jugadores[Ganador[2]].getTeam(), Ganador[1])
-                elif(Ganador[0] == 'win'):
-                    self.actionGame.win(Ganador[1])
-                    self.darPuntosEquipo(Ganador[1],2)
+                    continue
+
+                self.actionGame.showResultMano(Resultados['playeridWin'], self.jugadores[Resultados['playeridWin']].getName(),  Resultados['playerTeam'],  Resultados['cardWin'])
+                if(Resultados['roundWin']):
+                    if(Resultados['status'] == 0):
+                        self.actionGame.win(Resultados['teamWin'])
+                    elif(Resultados['status'] == 2):
+                        self.actionGame.winEmpate(Resultados['teamWin'])
+                    self.darPuntosEquipo(Resultados['teamWin'],2)
                     self.resetRonda()
                     break
-                elif(Ganador[0] == 'empate'):
-                    self.actionGame.winEmpate(Ganador[2].getTeam())
-                    self.darPuntosEquipo(Ganador[2].getTeam(),2)
-                    self.resetRonda()
-                    break
-            time.sleep(5)
+
+            break
+        msg_debug("Juego Terminado")
