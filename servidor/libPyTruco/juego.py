@@ -172,7 +172,6 @@ class Juego():
             else:
                 puntajeCartaMayor = self.cartas_.getPoints(self.returnObtenerGanador['cardWin'])
                 msg_debug("[Carta Ganadora] %s:%d" % (self.returnObtenerGanador['cardWin'], puntajeCartaMayor))
-
             if(puntajeCartaJugador > puntajeCartaMayor):
                 self.returnObtenerGanador['playeridWin'] = self.returnObtenerGanador['playerid']
                 self.returnObtenerGanador['teamWin'] = self.returnObtenerGanador['playerTeam']
